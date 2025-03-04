@@ -26,7 +26,7 @@ const Sidebar = ({ toggle }: SidebarProps) => {
         console.log(toggle);
     }, [toggle]); 
     return ( 
-        <div className={`flex flex-col h-screen ${ toggle ? " w-64 ": " w-24 items-center"} bg-gray-100 p-4 space-y-6 md:block`}>
+        <div className={` flex flex-col  ${ toggle ? " w-64 ": " w-24 items-center"} bg-gray-100 p-4 space-y-6 md:block`}>
             <nav className="flex-1 space-y-2">
                 <div>
                     <p className={`flex items-center font-bold ${ toggle ? "": "justify-center"}`}> MENU </p>
