@@ -32,7 +32,7 @@ const Header = ({ toggle, setToggle }: HeaderProps) => {
             </div>
             <div className="flex items-center space-x-6 ">
                 <div className="flex items-center space-x-3">
-                    <Image src={"/assets/66306s.jpg"} width={40} height={40} className="rounded-full ring-2 ring-gray-200" alt={"me"} />
+                    <Image src={"/assets/66306s.jpg"} width={40} height={40} className="rounded-full ring-2 ring-gray-200" alt={"account-image"} />
                     <div className="flex items-center hover:text-gray-600 cursor-pointer">
                         <span className="font-medium">Adul Vasuvantok</span>
                         <FiChevronDown className="ml-2 h-4 w-4 cursor-pointer transition-all duration-200 rounded-full  hover:ring-gray-200  hover:ring-2 " />

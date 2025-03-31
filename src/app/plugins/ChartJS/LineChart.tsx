@@ -3,7 +3,7 @@ import Chart from "chart.js";
 
 declare global {
   interface Window {
-    myBar: Chart;
+    myLine: Chart;
   }
 }
 
@@ -12,12 +12,11 @@ interface ChartConfig {
   data: {
     labels: string[];
     datasets: Array<{
-      // label: number;
+      label: number;
       backgroundColor: string;
       borderColor: string;
       data: number[];
       fill: boolean;
-      barThickness: number;
     }>;
   };
   options: {
@@ -26,14 +25,7 @@ interface ChartConfig {
     title: {
       display: boolean;
       text: string;
-    };
-    tooltips: {
-      mode: string;
-      intersect: boolean;
-    };
-    hover: {
-      mode: string;
-      intersect: boolean;
+      fontColor: string;
     };
     legend: {
       display: boolean;
@@ -43,14 +35,27 @@ interface ChartConfig {
       align: string;
       position: string;
     };
+    tooltips: {
+      mode: string;
+      intersect: boolean;
+    };
+    hover: {
+      mode: string;
+      intersect: boolean;
+    };
     scales: {
       xAxes: Array<{
+        ticks: {
+          fontColor: string;
+        };
         display: boolean;
         scaleLabel: {
           display: boolean;
           labelString: string;
+          fontColor: string;
         };
         gridLines: {
+          display: boolean;
           borderDash: number[];
           borderDashOffset: number[];
           color: string;
@@ -60,15 +65,19 @@ interface ChartConfig {
         };
       }>;
       yAxes: Array<{
+        ticks: {
+          fontColor: string;
+        };
         display: boolean;
         scaleLabel: {
           display: boolean;
           labelString: string;
+          fontColor: string;
         };
         gridLines: {
           borderDash: number[];
-          drawBorder: boolean;
           borderDashOffset: number[];
+          drawBorder: boolean;
           color: string;
           zeroLineColor: string;
           zeroLineBorderDash: number[];
@@ -79,10 +88,10 @@ interface ChartConfig {
   };
 }
 
-export default function CardBarChart() {
+function CardLineChart() {
   React.useEffect(() => {
     const config: ChartConfig = {
-      type: "bar",
+      type: "line",
       data: {
         labels: [
           "January",
@@ -95,20 +104,18 @@ export default function CardBarChart() {
         ],
         datasets: [
           {
-            // label: new Date().getFullYear(),
-            backgroundColor: "#C7CEEF",
-            borderColor: "#C7CEEF",
-            data: [30, 78, 56, 34, 100, 45, 13],
-            fill: false,
-            barThickness: 20,
-          },
-          {
-            // label: new Date().getFullYear() - 1,
+            label: new Date().getFullYear(),
             backgroundColor: "#8593ED",
             borderColor: "#8593ED",
-            data: [27, 68, 86, 74, 10, 4, 87],
+            data: [65, 78, 66, 44, 56, 67, 75],
             fill: false,
-            barThickness: 20,
+          },
+          {
+            label: new Date().getFullYear() - 1,
+            fill: false,
+            backgroundColor: "#C7CEEF",
+            borderColor: "#C7CEEF",
+            data: [40, 68, 86, 74, 56, 60, 87],
           },
         ],
       },
@@ -117,7 +124,16 @@ export default function CardBarChart() {
         responsive: true,
         title: {
           display: false,
-          text: "Orders Chart",
+          text: "Sales Charts",
+          fontColor: "#000",
+        },
+        legend: {
+          display: false,
+          labels: {
+            fontColor: "#000",
+          },
+          align: "end",
+          position: "bottom",
         },
         tooltips: {
           mode: "index",
@@ -127,27 +143,24 @@ export default function CardBarChart() {
           mode: "nearest",
           intersect: true,
         },
-        legend: {
-          display: false,
-          labels: {
-            fontColor: "#000"
-          },
-          align: "end",
-          position: "bottom"
-        },
         scales: {
           xAxes: [
             {
-              display: false,
+              ticks: {
+                fontColor: "#000",
+              },
+              display: true,
               scaleLabel: {
-                display: true,
+                display: false,
                 labelString: "Month",
+                fontColor: "#000",
               },
               gridLines: {
+                display: false,
                 borderDash: [2],
                 borderDashOffset: [2],
                 color: "rgba(33, 37, 41, 0.3)",
-                zeroLineColor: "rgba(33, 37, 41, 0.3)",
+                zeroLineColor: "rgba(0, 0, 0, 0)",
                 zeroLineBorderDash: [2],
                 zeroLineBorderDashOffset: [2],
               },
@@ -155,17 +168,21 @@ export default function CardBarChart() {
           ],
           yAxes: [
             {
+              ticks: {
+                fontColor: "#000",
+              },
               display: true,
               scaleLabel: {
                 display: false,
                 labelString: "Value",
+                fontColor: "#000",
               },
               gridLines: {
-                borderDash: [2],
+                borderDash: [3],
+                borderDashOffset: [3],
                 drawBorder: false,
-                borderDashOffset: [2],
-                color: "rgba(33, 37, 41, 0.2)",
-                zeroLineColor: "rgba(33, 37, 41, 0.15)",
+                color: "#000",
+                zeroLineColor: "rgba(33, 37, 41, 0)",
                 zeroLineBorderDash: [2],
                 zeroLineBorderDashOffset: [2],
               },
@@ -174,16 +191,20 @@ export default function CardBarChart() {
         },
       },
     };
-    const canvas = document.getElementById("bar-chart") as HTMLCanvasElement;
+    const canvas = document.getElementById("line-chart") as HTMLCanvasElement;
     const ctx = canvas.getContext("2d");
     if (ctx) {
-      window.myBar = new Chart(ctx, {
+      window.myLine = new Chart(ctx, {
         type: config.type,
-        data: config.data,
+        data: {
+          labels: config.data.labels,
+          datasets: config.data.datasets.map((dataset) => ({
+            ...dataset,
+            label: dataset.label.toString(), // Convert number to string
+          })),
+        },
         options: {
-          maintainAspectRatio: config.options.maintainAspectRatio,
-          responsive: config.options.responsive,
-          title: config.options.title,
+          ...config.options,
           tooltips: {
             mode: "index" as const,
             intersect: config.options.tooltips.intersect,
@@ -193,8 +214,10 @@ export default function CardBarChart() {
             intersect: config.options.hover.intersect,
           },
           legend: {
-            display: config.options.legend.display,
-            labels: config.options.legend.labels,
+            ...config.options.legend,
+            labels: {
+              fontColor: config.options.legend.labels.fontColor,
+            },
             align: config.options.legend.align as "start" | "center" | "end",
             position: config.options.legend.position as
               | "top"
@@ -205,14 +228,18 @@ export default function CardBarChart() {
           scales: {
             xAxes: [
               {
+                ticks: {
+                  fontColor: config.options.scales.xAxes[0].ticks.fontColor,
+                },
                 display: config.options.scales.xAxes[0].display,
                 scaleLabel: config.options.scales.xAxes[0].scaleLabel,
                 gridLines: {
+                  display: config.options.scales.xAxes[0].gridLines.display,
                   borderDash:
                     config.options.scales.xAxes[0].gridLines.borderDash,
                   borderDashOffset:
                     config.options.scales.xAxes[0].gridLines
-                      .borderDashOffset[0],
+                      .borderDashOffset[0], // Convert array to single number
                   color: config.options.scales.xAxes[0].gridLines.color,
                   zeroLineColor:
                     config.options.scales.xAxes[0].gridLines.zeroLineColor,
@@ -220,22 +247,25 @@ export default function CardBarChart() {
                     config.options.scales.xAxes[0].gridLines.zeroLineBorderDash,
                   zeroLineBorderDashOffset:
                     config.options.scales.xAxes[0].gridLines
-                      .zeroLineBorderDashOffset[0],
+                      .zeroLineBorderDashOffset[0], // Convert array to single number
                 },
               },
             ],
             yAxes: [
               {
+                ticks: {
+                  fontColor: config.options.scales.yAxes[0].ticks.fontColor,
+                },
                 display: config.options.scales.yAxes[0].display,
                 scaleLabel: config.options.scales.yAxes[0].scaleLabel,
                 gridLines: {
                   borderDash:
                     config.options.scales.yAxes[0].gridLines.borderDash,
-                  drawBorder:
-                    config.options.scales.yAxes[0].gridLines.drawBorder,
                   borderDashOffset:
                     config.options.scales.yAxes[0].gridLines
-                      .borderDashOffset[0],
+                      .borderDashOffset[0], // Convert array to single number
+                  drawBorder:
+                    config.options.scales.yAxes[0].gridLines.drawBorder,
                   color: config.options.scales.yAxes[0].gridLines.color,
                   zeroLineColor:
                     config.options.scales.yAxes[0].gridLines.zeroLineColor,
@@ -243,7 +273,7 @@ export default function CardBarChart() {
                     config.options.scales.yAxes[0].gridLines.zeroLineBorderDash,
                   zeroLineBorderDashOffset:
                     config.options.scales.yAxes[0].gridLines
-                      .zeroLineBorderDashOffset[0],
+                      .zeroLineBorderDashOffset[0], // Convert array to single number
                 },
               },
             ],
@@ -256,11 +286,13 @@ export default function CardBarChart() {
     <>
       <div className="mt-5 relative flex flex-col min-w-0 break-words w-full">
         <div className="flex-auto">
-          <div className="relative h-[300px]">
-            <canvas id="bar-chart"></canvas>
+          <div className="relative h-[250px]">
+            <canvas id="line-chart"></canvas>
           </div>
         </div>
       </div>
     </>
   );
 }
+
+export default CardLineChart;
