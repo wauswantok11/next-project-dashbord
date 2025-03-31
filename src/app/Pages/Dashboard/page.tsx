@@ -12,10 +12,17 @@ import AutoGraphIcon from '@mui/icons-material/AutoGraph';
 import { getAdminDashboard } from "../../Service/ServiceApi";
 import { ResponseDashboardDTO } from "../../Service/ServiceDashboardDto";
 import {formatNumber } from "../../utils/formatNumber";
+import { ValueChartDoughnut } from "../../plugins/ChartJS/CharDto";
+// import { CiUser } from "react-icons/ci";
+// import { FaRegUser } from "react-icons/fa";
+import { FaRegUser } from "react-icons/fa6";
+
+import { RiAdminLine } from "react-icons/ri";
 
 const Dashboard = () => {
   const [activeDay, setActiveDay] = React.useState('all');
   const [dashboardData, setDashboardData] = React.useState<ResponseDashboardDTO | null>(null);
+  const [valueChartDoug, setValueChartDoug] = React.useState<ValueChartDoughnut[]>([]);
   const [formattedMetrics, setFormattedMetrics] = React.useState({
     totalUsers: '',
     totalBusinesses: '',
@@ -52,10 +59,78 @@ const Dashboard = () => {
         newBusinesses: formatNumber(dashboardData?.data?.count_new_businesses || 0),
         activeUsers: formatNumber(dashboardData?.data?.count_users_active || 0)
       });
+      // setValueChartDoug(
+      // [
+      //   {
+      //   name : "Medical",
+      //   value : dashboardData?.data?.count_total_medical_pre_register || 0,
+      //   color : '#ff0000'
+      //   },{
+      //     name : "Student",
+      //     value : dashboardData?.data?.count_total_edu_student_pre_register || 0,
+      //     color : '#ffb900' 
+      //   },{
+      //     name : "Teacher",
+      //     value : dashboardData?.data?.count_total_edu_teacher_pre_register || 0,
+      //     color : '#fff300' 
+      //   },{
+      //     name : "Officer",
+      //     value : dashboardData?.data?.count_total_edu_officer_pre_register || 0,
+      //     color : '#7cff00' 
+      //   },{
+      //     name : "Attendance",
+      //     value : dashboardData?.data?.count_total_time_attendance_pre_register || 0,
+      //     color : '#00ffd8' 
+      //   },{
+      //     name : "Care Giver",
+      //     value : dashboardData?.data?.count_total_care_giver_pre_register || 0,
+      //     color : '#0059ff' 
+      //   }
+      // ])
+      const chartData = [
+        {
+          name: "Medical",
+          value: dashboardData?.data?.count_total_medical_pre_register,
+          color: '#ff0000'
+        },
+        {
+          name: "Student",
+          value: dashboardData?.data?.count_total_edu_student_pre_register,
+          color: '#ffb900'
+        },
+        {
+          name: "Teacher",
+          value: dashboardData?.data?.count_total_edu_teacher_pre_register,
+          color: '#fff300'
+        },
+        {
+          name: "Officer",
+          value: dashboardData?.data?.count_total_edu_officer_pre_register,
+          color: '#7cff00'
+        },
+        {
+          name: "Attendance",
+          value: dashboardData?.data?.count_total_time_attendance_pre_register,
+          color: '#00ffd8'
+        },
+        {
+          name: "Care Giver",
+          value: dashboardData?.data?.count_total_care_giver_pre_register,
+          color: '#0059ff'
+        }
+      ];
+    
+      setValueChartDoug(chartData.map(item => ({
+        ...item,
+        value: item.value || 0
+      })));
     }
   },[dashboardData])
 
- 
+  React.useEffect(()=>{ 
+    console.log(valueChartDoug)
+  },[valueChartDoug])
+
   return (
     <>
       <div className="max-w-full" >
@@ -178,46 +253,24 @@ const Dashboard = () => {
                 </div>
               </div>
             </div>
-            <p className="mt-5 text-zinc-500"> From 1-6 Dec, 2020 </p>
-            <div className="mt-15 mb-10">
-              <CardBarDoughnut />
-            </div>
-            <div className="flex items-center justify-between pr-5 mt-5">
-              <div>
-                <p className="flex items-center ">
-                  <span style={{ color: "#5A6ACF", marginRight: "5px" }}>
-                    <FaCircle />
-                  </span>
-                  Afternoon
-                </p>
-              </div>
-              <div>
-                <p className=" flex items-center">
-                  <span style={{ color: "#8593ED", marginRight: "5px" }}>
-                    <FaCircle />
-                  </span>
-                  Evening
-                </p>
-              </div>
-              <div>
-                <p className="flex items-center">
-                  <span style={{ color: "#C7CEEF", marginRight: "5px" }}>
-                    <FaCircle />
-                  </span>
-                  Morning
-                </p>
-              </div>
-            </div>
-            <div className="flex items-center justify-between">
-              <div className="pl-8">
-                <p className="flex items-center">40%</p>
-              </div>
-              <div>
-                <p className="flex items-center">32%</p>
-              </div>
-              <div className="pr-8">
-                <p className="flex items-center">28%</p>
-              </div>
+            {/* <p className="mt-5 text-zinc-500"> From 1-6 Dec, 2020 </p> */}
+            <div className="mt-15 mb-5">
+              <CardBarDoughnut value={valueChartDoug} />
+            </div> 
+            <div className="grid grid-cols-3 gap-4 pr-5 mt-5 ">
+              {[...valueChartDoug]
+                .sort((a, b) => b.value - a.value)
+                .map((item, index) => (
+                <div key={index} className="flex flex-col items-center">
+                  <p className="flex items-center">
+                    <span style={{ color: item.color, marginRight: "5px" }}>
+                      <FaCircle />
+                    </span>
+                    {item.name}
+                  </p>
+                  <p className="text-sm text-gray-600 font-bold">{item.value}</p>
+                </div>
+              ))}
             </div>
           </div>
         </div>
@@ -233,44 +286,32 @@ const Dashboard = () => {
           </div>
           <div className="w-full h-[450px] p-5 bg-white rounded-[10px]">
             <div>
-              <p>Most Ordered Food</p>
+              <p>5 อันดับ Service ที่ได้รับความนิยม</p>
               <span className="mt-7 text-zinc-500">
                 Adipiscing elit, sed do eiusmod tempor
               </span>
               <div>
                 <div className="flex gap-2 mt-5 mb-5 items-center justify-between">
                   <div className="w-[10%]">
-                    <Image
-                      src={"/assets/66306s.jpg"}
-                      className="mr-3 rounded-full ring-2 ring-gray-200"
-                      alt={"me"}
-                      width={28}
-                      height={28}
-                    />
+                    <FaRegUser className="mr-3 text-2xl font-bold"/>
                   </div>
                   <div className="w-[60%] flex flex-stat">
-                    <p className="items-start">Fresh Salad Bowl</p>
+                    <p className="items-start">Service OneID</p>
                   </div>
                   <div className="w-[30%] flex justify-end">
-                    <p className="">IDR 45.000</p>
+                    <p className="">190 องค์กร</p>
                   </div>
                 </div>
                 <div className="border-1 border-zinc-300" />
                 <div className="flex gap-2 mt-5 mb-5 items-center justify-between">
                   <div className="w-[10%]">
-                    <Image
-                      src={"/assets/66306s.jpg"}
-                      className="mr-3 rounded-full ring-2 ring-gray-200"
-                      alt={"me"}
-                      width={28}
-                      height={28}
-                    />
+                    <RiAdminLine className="mr-3 text-2xl font-bold" />
                   </div>
                   <div className="w-[60%] flex flex-stat">
-                    <p className="items-start">Fresh Salad Bowl</p>
+                    <p className="items-start">Service OneID RA</p>
                   </div>
                   <div className="w-[30%] flex justify-end">
-                    <p className="">IDR 45.000</p>
+                    <p className="">120 องค์กร</p>
                   </div>
                 </div>
                 <div className="border-1 border-zinc-300" />

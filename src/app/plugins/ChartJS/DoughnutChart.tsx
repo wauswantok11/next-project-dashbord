@@ -1,5 +1,6 @@
 import React from "react";
 import Chart from "chart.js";
+import { ValueChartDoughnut } from "./CharDto";
 
 declare global {
   interface Window {
@@ -31,18 +32,20 @@ interface ChartConfig {
     };
   };
 }
-
-function CardBarDoughnut() {
+interface CardBarDoughnutProps {
+  value: ValueChartDoughnut[];
+}
+function CardBarDoughnut(datas : CardBarDoughnutProps) {
   React.useEffect(() => {
     const config: ChartConfig = {
       type: "doughnut",
       data: {
-        labels: ["Afternoon", "Evening", "Morning"],
+        labels: datas.value.map(item => item.name),
         datasets: [
           {
-            data: [55, 25, 20],
-            backgroundColor: ["#5A6ACF", "#8593ED", "#C7CEEF"],
-            borderColor: ["#5A6ACF", "#8593ED", "#C7CEEF"],
+            data: datas.value.map(item => item.value),
+            backgroundColor: datas.value.map(item => item.color),
+            borderColor: datas.value.map(item => item.color),
             borderWidth: 1
           },
         ],
@@ -74,7 +77,7 @@ function CardBarDoughnut() {
         }
       });
     }
-  }, []);
+  }, [datas]);
 
   return (
     <>
